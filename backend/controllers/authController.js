@@ -1,6 +1,7 @@
-import User from '../models/User.js';
+import User from '../models/user.js';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcrypt";
+import { validate } from 'email-validator';
 
 // Generate JWT Token
 const generateToken = (user) => {
@@ -28,6 +29,12 @@ export const signupUser = async (req, res) => {
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
+        }
+
+        //check for valid email
+        if(!validate(email)){
+            res.status(403).json({ message: 'Invalid email id' });
+            return
         }
 
         // Create new user

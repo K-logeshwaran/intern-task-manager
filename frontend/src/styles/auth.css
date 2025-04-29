@@ -1,0 +1,23 @@
+.auth-main{
+    display: flex;
+    justify-content: space-around;
+    min-width: 100%;
+    min-height: 90vh;
+}
+
+.auth-info{
+    flex-basis: 50%;
+    margin: auto;
+    min-height: 100vh;
+}
+
+.auth-outlet{
+    flex-basis: 50%;
+    margin: auto;
+}
+
+.auth-forms{
+width: 100%;
+padding: 5rem;
+
+}

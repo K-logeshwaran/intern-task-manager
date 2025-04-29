@@ -1,35 +1,73 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import ProjectDetails from "./pages/ProjectDetails";
+import { AuthProvider } from "./contexts/AuthContext";
+import Layout from "./lauouts/layout";
+import ProtectedRoute from "./routes/Protected";
+import CheckLoggedin from "./components/redirect";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route
+            index
+            element={
+              <CheckLoggedin>
+                <Signup />
+              </CheckLoggedin>
+            }
+          />{" "}
+          {/* <- default = Signup */}
+          <Route
+            path="signup"
+            element={
+              <CheckLoggedin>
+                <Signup />
+              </CheckLoggedin>
+            }
+          />
+          <Route
+            path="login"
+            element={
+              <CheckLoggedin>
+                <Login />
+              </CheckLoggedin>
+            }
+          />
+        </Route>
+
+        <Route path="/dashboard" element={<ProtectedRoute />}>
+          <Route index element={<Dashboard />} />
+          <Route path="projects/:projectId" element={<ProjectDetails />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
+
+// import { Routes, Route, Navigate } from 'react-router-dom';
+// import Signup from './pages/Signup';
+// import Login from './pages/Login';
+// import Dashboard from './pages/Dashboard';
+// import { useAuth } from './contexts/AuthContext';
+
+// function App() {
+//   const { user } = useAuth();
+
+//   return (
+//     <Routes>
+//       <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/dashboard" />} />
+//       <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
+//       <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+//     </Routes>
+//   );
+// }
+
+// export default App;

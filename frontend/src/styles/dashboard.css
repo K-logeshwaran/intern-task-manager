@@ -1,0 +1,14 @@
+.dashboard-section{
+ width: 80%;
+ margin: auto;
+ padding: 2.5rem;
+}
+
+.project-display-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 equal columns */
+    gap: 1rem; /* space between items */
+    place-items: center;
+    padding: .5rem;
+  }
+  

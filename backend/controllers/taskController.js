@@ -1,29 +1,37 @@
-import Task from '../models/Task.js';
-import Project from '../models/Project.js';
+
+import Project from '../models/project.js';
 
 // @desc    Create a new task
 // @route   POST /api/tasks
 // @access  Private
 export const createTask = async (req, res) => {
     const { title, description, projectId } = req.body;
+    console.log("lokfffff",title,description,projectId);
+    console.log("requested");
+    
     const userId = req.user.id;
 
     try {
         // Check if project exists and belongs to the user
         const project = await Project.findOne({ _id: projectId, userId });
+        
         if (!project) {
             return res.status(404).json({ message: 'Project not found or unauthorized' });
         }
 
-        const task = new Task({
-            projectId,
-            title,
-            description,
-        });
+        console.log("req proj",project);
+        project.tasks.push({ title, description});
+        await project.save();
+        
 
-        await task.save();
+        // const task = new Task({
+        //     title,
+        //     description,
+        // });
 
-        res.status(201).json(task);
+        // await task.save();
+
+        res.status(201).json(project);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
