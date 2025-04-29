@@ -72,3 +72,34 @@ export const getProject = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// @route   DELETE /api/projects/:projectId
+// @desc    Delete a project for the logged-in user
+// @access  Private
+export const deleteProject = async (req, res) => {
+  const projectId = req.params.projectId;
+  const userId = req.user.id;
+
+  if (!mongoose.Types.ObjectId.isValid(projectId)) {
+    return res.status(400).json({ message: "Invalid project ID" });
+  }
+
+  try {
+    const project = await Project.findOne({ _id: projectId, userId });
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found or unauthorized" });
+    }
+
+    // Optional: Delete associated tasks if they're in a separate collection
+    // await Task.deleteMany({ projectId });
+
+    await project.deleteOne();
+
+    res.json({ message: "Project deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

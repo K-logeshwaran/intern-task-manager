@@ -1,5 +1,5 @@
 import express from 'express';
-import { createProject, getProject, getProjects } from '../controllers/projectController.js';
+import { createProject, deleteProject, getProject, getProjects } from '../controllers/projectController.js';
 import { protect } from '../middleware/authMiddleware.js'; // Import protect middleware
 
 const router = express.Router();
@@ -19,5 +19,11 @@ router.get('/', protect, getProjects);
 // @access  Private (use protect middleware)
 router.get('/:projectId', protect, getProject);
 
+
+
+// @route   DELETE /api/projects/:projectId
+// @desc    Delete a project for the logged-in user
+// @access  Private
+router.delete('/:projectId', protect, deleteProject);
 
 export default router;

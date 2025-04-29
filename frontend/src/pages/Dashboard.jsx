@@ -11,7 +11,8 @@ const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const [projectName, setProjectName] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [isdeleted, setDeleted] = useState(false);
+  
   const fetchProjects = async () => {
     try {
       const token = user.token;
@@ -40,10 +41,10 @@ const Dashboard = () => {
       setProjectName("");
       fetchProjects(); // refresh projects
     } catch (err) {
-      if(err.response.status == 400){
-        toast("Projects Limit Reached!  Can only create 4 projects")
-      };
-      
+      if (err.response.status == 400) {
+        toast("Projects Limit Reached!  Can only create 4 projects");
+      }
+
       console.error(err.response.data);
     }
   };
@@ -53,9 +54,28 @@ const Dashboard = () => {
     navigate("/");
   };
 
+  const handleDeleteProject = async (projectId) => {
+    if (!window.confirm("Are you sure you want to delete this project?"))
+      return;
+
+    try {
+      const token = user.token;
+      await axios.delete(`/api/projects/${projectId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      alert("Project deleted successfully!");
+      setDeleted(bool=>!bool);
+      // Callback to refresh UI or redirect
+    } catch (err) {
+      console.error("Delete error:", err.response);
+      alert("Failed to delete project. Please try again.");
+    }
+  };
+
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [isdeleted]);
 
   const dateFormatter = (date) => {
     let test = new Date(date);
@@ -68,17 +88,34 @@ const Dashboard = () => {
     return test.toLocaleDateString("en-US", options);
   };
 
-  const ProjectCards= ({projectName,created_at,noOfTasks})=>(<div className="card" style={{ width: "20rem" }}>
-          <div className="card-body">
-            <h5 className="card-title">{projectName}</h5>
-            <h6 className="card-subtitle mb-2 text-body-secondary">{dateFormatter(created_at)}</h6>
-            <p className="card-text">
-              No of tasks {noOfTasks}
-            </p>
-            <a class="btn btn-primary disabled" role="button" aria-disabled="false">Edit Project ✏️</a>
-          </div>
-        </div>)
-
+  const ProjectCards = ({ projectName, created_at, noOfTasks, projectId }) => (
+    <div className="card" style={{ width: "25rem" }}>
+      <div className="card-body">
+        <h5 className="card-title">{projectName}</h5>
+        <h6 className="card-subtitle mb-2 text-body-secondary">
+          {dateFormatter(created_at)}
+        </h6>
+        <p className="card-text">No of tasks {noOfTasks}</p>
+        <div className="d-flex justify-content-between">
+          <a
+            href={`/dashboard/projects/${projectId}`}
+            class="btn btn-primary btn-sm"
+            role="button"
+          >
+            Edit Project ✏️
+          </a>
+          <button
+            href={`/dashboard/projects/${projectId}`}
+            class="btn btn-danger btn-sm"
+            role="button"
+            onClick={() => handleDeleteProject(projectId)}
+          >
+            Delete 🗑️
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <main>
@@ -115,7 +152,6 @@ const Dashboard = () => {
           </button>
         </form>
 
-        
         <div>
           {projects.length === 0 ? (
             <p>No projects yet. Create one! 🎯</p>
@@ -126,9 +162,10 @@ const Dashboard = () => {
 
                 return (
                   <ProjectCards
-                  projectName={project.name}
-                  created_at={project.createdAt}
-                  noOfTasks={project.tasks.length}
+                    projectName={project.name}
+                    created_at={project.createdAt}
+                    noOfTasks={project.tasks.length}
+                    projectId={project._id}
                   />
                 );
               })}
@@ -136,7 +173,7 @@ const Dashboard = () => {
           )}
         </div>
       </section>
-      <ToastContainer/>
+      <ToastContainer />
     </main>
   );
 };

@@ -16,7 +16,7 @@ function Layout() {
 
         <div
           className="container d-flex justify-content-center  align-items-center"
-          style={{ minHeight: "70vh" }}
+          
         >
           <h1 style={{ fontSize: "4.5rem" }}>
             Your productivity, <br />
@@ -33,3 +33,4 @@ function Layout() {
 }
 
 export default Layout;
+
