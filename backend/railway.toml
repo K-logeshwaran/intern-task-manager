@@ -1,0 +1,19 @@
+[build]
+builder = "NIXPACKS"
+nixpacksPlan = { providers = ["node"] }
+buildCommand = "cd backend && npm install"
+
+[deploy]
+startCommand = "cd backend && npm start"
+watchPatterns = ["backend/**"]
+
+[runtime]
+numReplicas = 1
+sleepApplication = false
+
+[multiRegionConfig]
+asia-southeast1-eqsg3a = { numReplicas = 1 }
+
+[restartPolicy]
+type = "ON_FAILURE"
+maxRetries = 10
